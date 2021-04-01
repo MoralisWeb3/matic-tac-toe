@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import { useUserContext } from "./hooks/Moralis/User";
+import { Lobby } from "./routes/Lobby";
+import { TicTacToe } from "./routes/TicTacToe";
 
-function App() {
+export const App = () => {
+  const [userData] = useUserContext();
+
+  if (!userData) {
+    return (
+      <div className="bg-light py-5">
+        <h4 className="text-center">
+          Please sign up or login to play tic tac toe.
+        </h4>
+      </div>
+    );
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Switch>
+        <Route path="/" exact component={Lobby} />
+        <Route path="/tic-tac-toe" exact component={TicTacToe} />
+        <Route path="/tic-tac-toe/:gameId" exact component={TicTacToe} />
+      </Switch>
+    </>
   );
-}
+};
 
 export default App;
