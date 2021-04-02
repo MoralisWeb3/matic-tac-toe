@@ -1,13 +1,12 @@
-import Moralis from "moralis";
 import React from "react";
 import { Link } from "react-router-dom";
 import { useLoadGame } from "../context/Game";
-import { formatAddress, zeroAddress } from "../utils"
-
-const web3 = new Moralis.Web3();
+import { useTokenFromList } from "../context/Token";
+import { formatAddress, zeroAddress, formatBalance } from "../utils";
 
 export const GameListCard = ({ gameId }) => {
   const [game] = useLoadGame(gameId);
+  const token = useTokenFromList(game?.data?.token);
   return (
     <div className="card">
       <div className="card-body">
@@ -17,7 +16,7 @@ export const GameListCard = ({ gameId }) => {
               <strong>#{gameId}</strong>
             </p>
             <p className="mb-0">{formatAddress(game?.data?.player0)}</p>
-            <p className="mb-0">{web3.utils.fromWei(game?.data?.balance0 ?? "")}</p>
+            <p className="mb-0">{formatBalance(game?.data?.balance0 ?? "", token?.decimals)} {token?.symbol}</p>
           </div>
           <div className="col">
             <p className="mb-0">
@@ -26,7 +25,7 @@ export const GameListCard = ({ gameId }) => {
                 : "In Progress"}
             </p>
             <p className="mb-0 ">{formatAddress(game?.data?.player1)}</p>
-            <p className="mb-0">{web3.utils.fromWei(game?.data?.balance1 ?? "")}</p>
+            <p className="mb-0">{formatBalance(game?.data?.balance1 ?? "", token?.decimals)} {token?.symbol}</p>
           </div>
         </div>
         <div className="text-end">
@@ -41,6 +40,7 @@ export const GameListCard = ({ gameId }) => {
 
 export const GameListItem = ({ gameId }) => {
   const [game] = useLoadGame(gameId);
+  const token = useTokenFromList(game?.data?.token);
   return (
     <li className="list-group-item">
       <div className="row align-items-center">
@@ -49,7 +49,7 @@ export const GameListItem = ({ gameId }) => {
             <strong>#{gameId}</strong>
           </p>
           <p className="mb-0">{formatAddress(game?.data?.player0)}</p>
-          <p className="mb-0">{web3.utils.fromWei(game?.data?.balance0 ?? "")}</p>
+          <p className="mb-0">{formatBalance(game?.data?.balance0 ?? "", token?.decimals)} {token?.symbol}</p>
         </div>
         <div className="col">
           <p className="mb-0">
@@ -58,7 +58,7 @@ export const GameListItem = ({ gameId }) => {
               : "In Progress"}
           </p>
           <p className="mb-0 ">{formatAddress(game?.data?.player1)}</p>
-          <p className="mb-0">{web3.utils.fromWei(game?.data?.balance1 ?? "")}</p>
+          <p className="mb-0">{formatBalance(game?.data?.balance1 ?? "", token?.decimals)} {token?.symbol}</p>
         </div>
       </div>
       <div className="text-end">

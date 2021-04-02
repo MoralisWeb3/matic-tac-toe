@@ -18,11 +18,14 @@
  *
  */
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
+const HDWalletProvider = require('@truffle/hdwallet-provider');
 // const infuraKey = "fj4jll3k.....";
 //
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const fs = require('fs');
+const mnemonic = fs.readFileSync("../seed.txt", "utf-8").toString().trim();
+
+console.log(new HDWalletProvider(mnemonic, 'wss://rpc-mumbai.maticvigil.com/ws/v1/4a69b6161fc0b7777eff3f5e49f047174b6e4e4a'))
+// .send({jsonrpc: '2.0', id: 1, params: [], })
 
 module.exports = {
   /**
@@ -72,10 +75,13 @@ module.exports = {
     // network_id: 2111,   // This network is yours, in the cloud.
     // production: true    // Treats this network as if it was a public net. (default: false)
     // }
-    // mumbai: {
-    //   provider: () => new HDWalletProvider(mnemonic, 'https://rpc-mumbai.matic.today'),
-    //   network_id: 
-    // }
+    mumbai: {
+      provider: () => new HDWalletProvider(mnemonic, 'wss://rpc-mumbai.maticvigil.com/ws/v1/4a69b6161fc0b7777eff3f5e49f047174b6e4e4a'),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    }
   },
 
   // Set default mocha options here, use special reporters etc.

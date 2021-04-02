@@ -6,5 +6,5 @@ module.exports = function (deployer) {
   deployer.deploy(TicTacToe);
 
   // Deploy erc20 contract and send ourselves balance
-  deployer.deploy(Moralis);
+  // deployer.deploy(Moralis);
 };

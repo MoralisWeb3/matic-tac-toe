@@ -1,6 +1,6 @@
 import { makeContext } from "./make";
 
-const initialAmount = "10000000000000000";
+const initialAmount = "";
 export const {
   Provider: BetAmountProvider,
   useContext: useBetAmount,

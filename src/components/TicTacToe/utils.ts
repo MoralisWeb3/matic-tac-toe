@@ -1,3 +1,11 @@
+export function gameDataBoxes(gameData) {
+  const rows = (gameData?.row1 ?? "").concat(
+    gameData?.row2 ?? "",
+    gameData?.row3 ?? ""
+  );
+  return rows.split("").map((v) => (v === "3" ? "X" : v === "2" ? "O" : null));
+}
+
 export function findWinner(boxes) {
   // Array with winning combinations
   const rows = [

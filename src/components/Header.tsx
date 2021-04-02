@@ -9,5 +9,5 @@ export const Header: FC<{ className?: string }> = ({ children, className }) => {
 };
 
 export const MainTitle = () => {
-    return <h4>MaTic Tac Toe</h4>
+    return <h4 className="text-center">MaTic Tac Toe</h4>
 }

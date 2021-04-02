@@ -1,13 +1,11 @@
 import React from "react";
-import { useTicTacToeContract } from "../../hooks/Contract/TicTacToe";
-import { useSelectedToken } from "../../context/Token";
-import { useRefetchGame } from "../../context/Game";
-import { useBetAmount } from "../../context/Bet";
-import { useSetAlert } from "../Alert";
-import Moralis from "moralis";
 import { useHistory } from "react-router";
-
-const web3 = new Moralis.Web3();
+import { useRefetchGame } from "../../context/Game";
+import { useTokenFromList } from "../../context/Token";
+import { useRefetchAllowance } from "../../context/Allowance";
+import { useTicTacToeContract } from "../../hooks/Contract/TicTacToe";
+import { formatBalance } from "../../utils";
+import { useSetAlert } from "../Alert";
 
 export const DisabledButton = ({ text }) => {
   return (
@@ -17,30 +15,28 @@ export const DisabledButton = ({ text }) => {
   );
 };
 
-export const ApproveButton = () => {
+export const ApproveButton = ({ token, amount }) => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
-  const refetch = useRefetchGame();
-  const [token] = useSelectedToken();
-  const [amount] = useBetAmount();
+  const refetch = useRefetchAllowance();
+  const tokenData = useTokenFromList(token)
 
   const handleApprove = async () => {
-    await contract
-      .approve(token, contract.address, amount)
-      .then(() => refetch())
-      .then(() =>
-        setAlert({
-          show: true,
-          title: "Approved",
-          message: `Successfully approved game to spend ${web3.utils.fromWei(
-            amount
-          )} your tokens!`,
-        })
-      )
-      .catch((e) => {
-        console.error(e);
-        setAlert({ show: true, title: "Approve Error", message: e.message });
-      });
+    try {
+      await contract
+        .approve(token, contract.address, amount)
+        .then(() => refetch(token, contract.address))
+        .then(() =>
+          setAlert({
+            show: true,
+            title: "Approved",
+            message: `Successfully approved game to spend ${formatBalance(amount, tokenData?.decimals)} ${tokenData?.symbol ?? ''} tokens!`,
+          })
+        );
+    } catch (e) {
+      console.error(e);
+      setAlert({ show: true, title: "Approve Error", message: e.message });
+    }
   };
 
   return (
@@ -50,19 +46,15 @@ export const ApproveButton = () => {
   );
 };
 
-export const StartGameButton = () => {
+export const StartGameButton = ({ token, amount }: { token: string, amount: string }) => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
-  const [token] = useSelectedToken();
-  const [amount] = useBetAmount();
-  const refetch = useRefetchGame();
   const history = useHistory();
 
   const handleStart = async () => {
     await contract
       .start(token, amount)
       .then((v) => {
-        console.log(v);
         const newGameId = v.events?.Start?.returnValues?.gameId;
         if (newGameId) {
           history.push(`/tic-tac-toe/${newGameId}`);
@@ -86,10 +78,9 @@ export const StartGameButton = () => {
   );
 };
 
-export const JoinGameButton = ({ gameId }: { gameId: string }) => {
+export const JoinGameButton = ({ gameId, amount }: { gameId: string, amount: string }) => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
-  const [amount] = useBetAmount();
   const refetch = useRefetchGame();
 
   const handleJoin = async () => {

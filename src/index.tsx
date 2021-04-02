@@ -6,7 +6,7 @@ import { MainLayout } from "./components/Layout";
 import { AlertProvider, AlertDisplay } from "./components/Alert";
 import { UserProvider, ChainProvider, AddressProvider } from "./hooks/Moralis";
 import { AllowancesProvider } from "./context/Allowance";
-import { SelectedTokenProvider } from "./context/Token";
+import { SelectedTokenProvider, TokenListProvider } from "./context/Token";
 import { BetAmountProvider } from "./context/Bet";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
@@ -17,18 +17,20 @@ ReactDOM.render(
     <AllowancesProvider>
       <BetAmountProvider>
         <SelectedTokenProvider>
-          <ChainProvider>
-            <AddressProvider>
-              <UserProvider>
-                <BrowserRouter>
-                  <MainLayout>
-                    <App />
-                    <AlertDisplay />
-                  </MainLayout>
-                </BrowserRouter>
-              </UserProvider>
-            </AddressProvider>
-          </ChainProvider>
+          <TokenListProvider>
+            <ChainProvider>
+              <AddressProvider>
+                <UserProvider>
+                  <BrowserRouter>
+                    <MainLayout>
+                      <App />
+                      <AlertDisplay />
+                    </MainLayout>
+                  </BrowserRouter>
+                </UserProvider>
+              </AddressProvider>
+            </ChainProvider>
+          </TokenListProvider>
         </SelectedTokenProvider>
       </BetAmountProvider>
     </AllowancesProvider>

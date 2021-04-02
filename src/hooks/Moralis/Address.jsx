@@ -1,23 +1,22 @@
 import Moralis from "moralis";
 import React, { createContext, useContext } from "react";
+import { getCurrentAddress } from "../../utils"
 
-const initial = window.ethereum?.selectedAddress ?? "";
-
-console.log(Moralis.Web3)
+const initial = getCurrentAddress();
 
 export const AddressContext = createContext([initial, () => {}]);
 export const useAddressContext = () => useContext(AddressContext);
 export const AddressProvider = ({ children }) => {
-  const value = React.useState(window.ethereum?.selectedAddress ?? "");
+  const value = React.useState(getCurrentAddress());
   React.useEffect(() => {
-    const [address, setAddress] = value
+    const [address, setAddress] = value;
     setTimeout(() => {
-      if (address !== window.ethereum?.selectedAddress) {
-        setAddress(window.ethereum?.selectedAddress);
+      if (address !== getCurrentAddress()) {
+        setAddress(getCurrentAddress());
       }
     }, 100);
     return Moralis.Web3.onAccountsChanged(([v]) => {
-      setAddress(v);
+      setAddress((v ?? "").toLowerCase());
     });
   }, []);
   return (
