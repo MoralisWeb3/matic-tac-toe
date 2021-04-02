@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSetAlert } from "../components/Alert";
 import { Header, MainTitle } from "../components/Header";
@@ -63,9 +63,6 @@ const GameCurrentActionButton = () => {
   const [amount] = useBetAmount();
   const allowance = useAllowance(game?.data?.token ?? token, contract.address);
   const selectedTokenData = useTokenFromList(token);
-  // const gameTokenData = useTokenFromList(game?.data?.token);
-
-  console.log(allowance, game)
 
   if (game.loading || allowance.loading) {
     return <DisabledButton text="Loading..." />;
@@ -115,7 +112,7 @@ const GameCurrentActionButton = () => {
   }
 
   if (areAllBoxesClicked(boxes)) {
-    return <DisabledButton text={`Tie Game`} />;
+    return <DisabledButton text="Tie Game" />;
   }
 
   return <DisabledButton text="Game In Progress" />;
@@ -125,11 +122,14 @@ const useTicTacToeActions = () => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
   const refetch = useRefetchGame();
+  const [loading, setLoading] = useState(false);
   const [game] = useGame();
+  
 
   const handleBoxClick = async (num: number) => {
     const row = Math.floor(num / 3);
     const col = num % 3;
+    setLoading(true);
 
     try {
       const gameId = game?.data?.gameId;
@@ -152,7 +152,8 @@ const useTicTacToeActions = () => {
       console.error(e);
       setAlert({ show: true, title: "Play Error", message: e.message });
     }
+    setLoading(false);
   };
 
-  return { handleBoxClick };
+  return { handleBoxClick, loading };
 };

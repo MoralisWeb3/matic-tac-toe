@@ -20,14 +20,29 @@ export const Lobby = () => {
     <>
       <Header className="text-center">
         <MainTitle />
+        <p className="mb-0">
+          <a
+            href="https://faucet.matic.network/"
+            target="_blank"
+            rel="nofollow noreferrer"
+          >
+            1. Request Test Matic
+          </a>
+        </p>
+        <p className="mb-0">
+          <a
+            href="https://dev.swapmatic.io/swap"
+            target="_blank"
+            rel="nofollow noreferrer"
+          >
+            2. Swap for Erc20
+          </a>
+        </p>
       </Header>
       <div className="container pb-4">
         <div className="row">
           {(starts || []).map((game) => (
-            <div
-              className="col-xs-12 col-md-4 mb-3"
-              key={game.get("gameId")}
-            >
+            <div className="col-xs-12 col-md-4 mb-3" key={game.get("gameId")}>
               <GameListCard gameId={game.get("gameId")} />
             </div>
           ))}

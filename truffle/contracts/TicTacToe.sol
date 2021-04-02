@@ -10,6 +10,7 @@ contract TicTacToe is ERC1155 {
 
     event Start(uint256 indexed gameId, address indexed player0, address indexed token, uint balance0);
     event Join(uint256 indexed gameId, address indexed player1, address indexed token, uint balance1);
+    event Play(uint256 indexed gameId, uint turn, uint row, uint col);
     event Tie(uint256 indexed gameId, address indexed player0, address indexed player1);
     event Win(uint256 indexed gameId, address indexed winner);
 
@@ -131,6 +132,8 @@ contract TicTacToe is ERC1155 {
 
         // Set time limit for the next move (in seconds), 10 minutes.
         g.time_limit = block.timestamp + (600);
+        
+        Play(gameId, player, row, column);
     }
 
     // This function is called in order to claim the reward in case the opponent

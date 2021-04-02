@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useHistory } from "react-router";
 import { useRefetchGame } from "../../context/Game";
 import { useTokenFromList } from "../../context/Token";
@@ -19,9 +19,11 @@ export const ApproveButton = ({ token, amount }) => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
   const refetch = useRefetchAllowance();
-  const tokenData = useTokenFromList(token)
+  const [loading, setLoading] = useState(false);
+  const tokenData = useTokenFromList(token);
 
   const handleApprove = async () => {
+    setLoading(true);
     try {
       await contract
         .approve(token, contract.address, amount)
@@ -30,28 +32,44 @@ export const ApproveButton = ({ token, amount }) => {
           setAlert({
             show: true,
             title: "Approved",
-            message: `Successfully approved game to spend ${formatBalance(amount, tokenData?.decimals)} ${tokenData?.symbol ?? ''} tokens!`,
+            message: `Successfully approved game to spend ${formatBalance(
+              amount,
+              tokenData?.decimals
+            )} ${tokenData?.symbol ?? ""} tokens!`,
           })
         );
     } catch (e) {
       console.error(e);
       setAlert({ show: true, title: "Approve Error", message: e.message });
     }
+    setLoading(false);
   };
 
   return (
-    <button className="btn btn-primary" onClick={handleApprove}>
-      Approve
+    <button
+      className="btn btn-primary"
+      onClick={handleApprove}
+      disabled={loading}
+    >
+      {loading ? "Approving..." : "Approve"}
     </button>
   );
 };
 
-export const StartGameButton = ({ token, amount }: { token: string, amount: string }) => {
+export const StartGameButton = ({
+  token,
+  amount,
+}: {
+  token: string;
+  amount: string;
+}) => {
   const contract = useTicTacToeContract();
+  const [loading, setLoading] = useState(false);
   const setAlert = useSetAlert();
   const history = useHistory();
 
   const handleStart = async () => {
+    setLoading(true);
     await contract
       .start(token, amount)
       .then((v) => {
@@ -69,21 +87,34 @@ export const StartGameButton = ({ token, amount }: { token: string, amount: stri
         console.error(e);
         setAlert({ show: true, title: "Start Error", message: e.message });
       });
+    setLoading(false);
   };
 
   return (
-    <button className="btn btn-primary" onClick={handleStart}>
-      Start
+    <button
+      className="btn btn-primary"
+      onClick={handleStart}
+      disabled={loading}
+    >
+      {loading ? "Starting..." : "Start"}
     </button>
   );
 };
 
-export const JoinGameButton = ({ gameId, amount }: { gameId: string, amount: string }) => {
+export const JoinGameButton = ({
+  gameId,
+  amount,
+}: {
+  gameId: string;
+  amount: string;
+}) => {
   const contract = useTicTacToeContract();
   const setAlert = useSetAlert();
   const refetch = useRefetchGame();
+  const [loading, setLoading] = useState(false);
 
   const handleJoin = async () => {
+    setLoading(true);
     await contract
       .join(gameId, amount)
       .then(() => refetch())
@@ -98,11 +129,12 @@ export const JoinGameButton = ({ gameId, amount }: { gameId: string, amount: str
         console.error(e);
         setAlert({ show: true, title: "Join Error", message: e.message });
       });
+    setLoading(false);
   };
 
   return (
-    <button className="btn btn-primary" onClick={handleJoin}>
-      Join
+    <button className="btn btn-primary" onClick={handleJoin} disabled={loading}>
+      {loading ? "Joining..." : "Join"}
     </button>
   );
 };
