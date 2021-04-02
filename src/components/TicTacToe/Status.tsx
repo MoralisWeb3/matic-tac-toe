@@ -24,7 +24,7 @@ export const GameStatusText = () => {
         isPlayersTurn={turn === 0}
         isWinner={winner === "O"}
       />
-      <p className="text-muted">vs</p>
+      <p className="text-muted mb-0">vs</p>
       <GamePlayerStatus
         address={player1}
         balance={balance1}
