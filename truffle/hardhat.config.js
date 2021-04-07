@@ -14,7 +14,7 @@ module.exports = {
     },
     optimism: {
       url: "https://kovan.optimism.io",
-      accounts: ['91345405f7759819721bd8c1f90d0f22f1c9221aacd86fe7ebf224541d30a3f2'],
+      accounts: [mnemonic],
     },
   },
   solidity: "0.7.6",

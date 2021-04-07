@@ -5,12 +5,14 @@ import { chainIdToName } from "../utils";
 
 export const IncorrectChainModal = ({ chainId }) => {
   const [currentChainId] = useChainContext();
-  const open = currentChainId !== chainId;
+  const open = Boolean(chainId && currentChainId !== chainId);
   const history = useHistory();
   useEffect(() => {
     if (open) {
       document.body.classList.add("modal-open");
-    } else {
+    }
+
+    return () => {
       document.body.classList.remove("modal-open");
     }
   }, [open]);
