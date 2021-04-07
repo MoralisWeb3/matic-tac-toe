@@ -1,11 +1,13 @@
 import React from "react";
 import { Route, Switch } from "react-router-dom";
+import { useSetDocTitleEffect } from "./components/Header";
 import { useUserContext } from "./hooks/Moralis/User";
-import { Lobby } from "./routes/Lobby";
+import { L2Lobby } from "./routes/Lobby";
 import { TicTacToe } from "./routes/TicTacToe";
 
 export const App = () => {
   const [userData] = useUserContext();
+  useSetDocTitleEffect();
 
   if (!userData) {
     return (
@@ -20,9 +22,17 @@ export const App = () => {
   return (
     <>
       <Switch>
-        <Route path="/" exact component={Lobby} />
+        <Route path="/" exact>
+          <L2Lobby tableName="StartTicTacToe" chainId="0x13881" />
+          <L2Lobby tableName="StartTicTacToeOptimism" chainId="0x45" />
+          <L2Lobby tableName="StartTicTacToeMoonbase" chainId="0x507" />
+        </Route>
         <Route path="/tic-tac-toe" exact component={TicTacToe} />
-        <Route path="/tic-tac-toe/:gameId" exact component={TicTacToe} />
+        <Route
+          path="/tic-tac-toe/:chainId/:gameId"
+          exact
+          component={TicTacToe}
+        />
       </Switch>
     </>
   );

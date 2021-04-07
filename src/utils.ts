@@ -19,3 +19,16 @@ export function zeroAddress() {
 export function getCurrentAddress() {
   return ((window as any).ethereum?.selectedAddress ?? "").toLowerCase();
 }
+
+export function chainIdToName (chainId) {
+    switch (chainId) {
+        case "0x13881":
+           return "Matic Mumbai"
+        case "0x45":
+           return "Optimism Test"
+        case "0x507":
+           return "Moonbase"
+        default:
+            return ""
+    }
+}

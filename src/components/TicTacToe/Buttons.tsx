@@ -6,6 +6,7 @@ import { useRefetchAllowance } from "../../context/Allowance";
 import { useTicTacToeContract } from "../../hooks/Contract/TicTacToe";
 import { formatBalance } from "../../utils";
 import { useSetAlert } from "../Alert";
+import { useChainContext } from "../../hooks/Moralis";
 
 export const DisabledButton = ({ text }) => {
   return (
@@ -65,6 +66,7 @@ export const StartGameButton = ({
 }) => {
   const contract = useTicTacToeContract();
   const [loading, setLoading] = useState(false);
+  const [chainId] = useChainContext();
   const setAlert = useSetAlert();
   const history = useHistory();
 
@@ -75,7 +77,7 @@ export const StartGameButton = ({
       .then((v) => {
         const newGameId = v.events?.Start?.returnValues?.gameId;
         if (newGameId) {
-          history.push(`/tic-tac-toe/${newGameId}`);
+          history.push(`/tic-tac-toe/${chainId}/${newGameId}`);
           setAlert({
             show: true,
             title: "Started",

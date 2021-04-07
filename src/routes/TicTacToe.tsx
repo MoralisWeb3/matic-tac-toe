@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import Moralis from 'moralis';
 import { useParams } from "react-router-dom";
 import { useSetAlert } from "../components/Alert";
 import { Header, MainTitle } from "../components/Header";
@@ -21,18 +22,21 @@ import {
 } from "../context/Game";
 import { useSelectedToken, useTokenFromList } from "../context/Token";
 import { useTicTacToeContract } from "../hooks/Contract/TicTacToe";
-import { useAddressContext } from "../hooks/Moralis";
+import { useAddressContext, useChainContext } from "../hooks/Moralis";
 import { formatAddress, getCurrentAddress, toWei, zeroAddress } from "../utils";
 import { useBetAmount } from "../context/Bet";
+import { useTokenBalance } from "../context/TokenBalance";
+import { IncorrectChainModal } from "../components/ChainModal";
 
 export const TicTacToe = () => {
-  const params = useParams<{ gameId: string }>();
+  const params = useParams<{ gameId: string, chainId: string }>();
   const value = useLoadGame(params.gameId);
+  const [chainId] = useChainContext()
 
   return (
     <GameProvider value={value}>
       <Header>
-        <MainTitle />
+        <MainTitle chainId={params.chainId || chainId} />
         {params.gameId ? <GameStatusText /> : <GameCreateForm />}
       </Header>
       <div className="mx-auto" style={{ width: 250 }}>
@@ -41,14 +45,31 @@ export const TicTacToe = () => {
           <GameCurrentActionButton />
         </div>
       </div>
+      <IncorrectChainModal chainId={params.chainId} />
     </GameProvider>
   );
 };
 
+
+const web3 = new Moralis.Web3((window as any).ethereum)
 const TicTacToeGame = () => {
   const [game] = useGame();
   const gameData = game?.data;
   const boxes = gameDataBoxes(gameData);
+  const refetch = useRefetchGame();
+
+  useEffect(() => {
+    const subscription = web3.eth.subscribe('logs', {
+      topics: [web3.utils.sha3('Play(uint256,uint256,uint256,uint256)')]
+    })
+    .on('data', (v) => {
+      console.log('Play Event', v)
+      refetch()
+    })
+    .on('error', (e) => console.log(e))
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const { handleBoxClick } = useTicTacToeActions();
 
@@ -62,9 +83,10 @@ const GameCurrentActionButton = () => {
   const [address] = useAddressContext();
   const [amount] = useBetAmount();
   const allowance = useAllowance(game?.data?.token ?? token, contract.address);
+  const balance = useTokenBalance(game?.data?.token ?? token, address);
   const selectedTokenData = useTokenFromList(token);
 
-  if (game.loading || allowance.loading) {
+  if (game.loading || allowance.loading || balance.loading) {
     return <DisabledButton text="Loading..." />;
   }
 
@@ -73,11 +95,16 @@ const GameCurrentActionButton = () => {
   }
 
   if (!game.data) {
+    const weiAmount = toWei(amount, selectedTokenData?.decimals)
+
     if (!amount) {
       return <DisabledButton text="Set bet amount" />
     }
 
-    const weiAmount = toWei(amount, selectedTokenData?.decimals)
+    if (!balance.data || Number(balance.data) < Number(weiAmount)) {
+      return <DisabledButton text="Insufficient balance" />
+    }
+
     if (allowance.data && Number(allowance.data) >= Number(weiAmount)) {
       return <StartGameButton amount={weiAmount} token={token} />;
     }
@@ -95,6 +122,10 @@ const GameCurrentActionButton = () => {
 
     if (!game.data.balance0) {
       return <DisabledButton text={<span>&nbsp;</span>} />
+    }
+
+    if (Number(balance.data) < Number(game.data.balance0)) {
+      return <DisabledButton text="Insufficient balance" />;
     }
 
     if (Number(allowance.data) >= Number(game.data.balance0)) {
@@ -130,11 +161,15 @@ const useTicTacToeActions = () => {
     const row = Math.floor(num / 3);
     const col = num % 3;
     setLoading(true);
+    if (loading) return;
 
     try {
       const gameId = game?.data?.gameId;
       if (!gameId) {
         throw new Error("Game not found");
+      }
+      if (game?.data?.[`player1`] === zeroAddress()) {
+        throw new Error("Waiting for second player to join");
       }
       const turn = game?.data?.turn ?? 0;
       const address = getCurrentAddress()?.toLowerCase();
@@ -154,6 +189,14 @@ const useTicTacToeActions = () => {
     }
     setLoading(false);
   };
+
+  // useEffect(() => {
+  //   const id = setInterval(() => {
+  //     refetch()
+  //   }, 5000)
+
+  //   return () => clearInterval(id)
+  // }, [])
 
   return { handleBoxClick, loading };
 };

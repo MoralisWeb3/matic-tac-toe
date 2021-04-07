@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 
 export const Navbar = () => {
   return (
-    <nav className="navbar navbar-light bg-light">
+    <nav className="navbar bg-light">
       <div className="container-fluid">
         <div className="me-2 mb-1">
           <ProfileIcon />

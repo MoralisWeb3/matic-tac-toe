@@ -2,39 +2,22 @@ import "./config";
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
+import { AlertDisplay } from "./components/Alert";
 import { MainLayout } from "./components/Layout";
-import { AlertProvider, AlertDisplay } from "./components/Alert";
-import { UserProvider, ChainProvider, AddressProvider } from "./hooks/Moralis";
-import { AllowancesProvider } from "./context/Allowance";
-import { SelectedTokenProvider, TokenListProvider } from "./context/Token";
-import { BetAmountProvider } from "./context/Bet";
+import { Providers } from "./context";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
 import "./index.css";
 
 ReactDOM.render(
-  <AlertProvider>
-    <AllowancesProvider>
-      <BetAmountProvider>
-        <SelectedTokenProvider>
-          <TokenListProvider>
-            <ChainProvider>
-              <AddressProvider>
-                <UserProvider>
-                  <BrowserRouter>
-                    <MainLayout>
-                      <App />
-                      <AlertDisplay />
-                    </MainLayout>
-                  </BrowserRouter>
-                </UserProvider>
-              </AddressProvider>
-            </ChainProvider>
-          </TokenListProvider>
-        </SelectedTokenProvider>
-      </BetAmountProvider>
-    </AllowancesProvider>
-  </AlertProvider>,
+  <Providers>
+    <BrowserRouter>
+      <MainLayout>
+        <App />
+        <AlertDisplay />
+      </MainLayout>
+    </BrowserRouter>
+  </Providers>,
   document.getElementById("root")
 );
 

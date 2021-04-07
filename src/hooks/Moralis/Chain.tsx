@@ -9,12 +9,10 @@ export const useChainContext = () => useContext(ChainContext);
 export const ChainProvider = ({ children }) => {
   const value = React.useState(ethereum?.chainId ?? "");
   React.useEffect(() => {
-    const [chain, setChain] = value
-    setTimeout(() => {
-      if (chain !== ethereum?.chainId) {
-        setChain(ethereum?.chainId);
-      }
-    }, 100);
+    const setChain = value[1]
+    ethereum?.request({ method: 'eth_chainId' })
+    .then((v) => setChain(v));
+
     return Moralis.Web3.onChainChanged((v) => {
       setChain(v);
     });

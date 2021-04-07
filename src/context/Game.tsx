@@ -38,7 +38,7 @@ export const useFetchGame = () => {
   const contract = useTicTacToeContract();
   const callback = useCallback((setGame: Dispatch<SetStateAction<IAsync<IGame>>>, gameId: string) => {
     if (gameId) {
-      setGame({ loading: true, data: null, error: null });
+      setGame(v => ({ ...v, loading: true }));
       contract
         .game(gameId)
         .then((data) => {

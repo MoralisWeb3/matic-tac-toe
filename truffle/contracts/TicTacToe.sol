@@ -1,8 +1,8 @@
-import "../node_modules/@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "../node_modules/@openzeppelin/contracts/utils/Counters.sol";
+pragma solidity >=0.7.0 <0.9.0;
 
-pragma solidity ^0.8.0;
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/Counters.sol";
 
 contract TicTacToe is ERC1155 {
     using Counters for Counters.Counter;
@@ -132,7 +132,7 @@ contract TicTacToe is ERC1155 {
 
         // Set time limit for the next move (in seconds), 10 minutes.
         g.time_limit = block.timestamp + (600);
-        
+
         Play(gameId, player, row, column);
     }
 

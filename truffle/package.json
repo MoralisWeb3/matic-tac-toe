@@ -7,13 +7,25 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf ./cache-ovm ./cache ./artifacts-ovm ./artifacts ./deployments"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.0.0",
-    "@truffle/hdwallet-provider": "^1.2.6"
+    "@eth-optimism/dev": "^1.1.1",
+    "@eth-optimism/plugins": "^1.0.0-alpha.2",
+    "@nomiclabs/hardhat-ethers": "^2.0.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/contracts": "^3.4.0",
+    "@truffle/hdwallet-provider": "^1.2.6",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.2.1",
+    "ethers": "^5.0.24",
+    "hardhat": "^2.0.7",
+    "hardhat-deploy": "^0.7.0-beta.49",
+    "mocha": "^8.2.1",
+    "moonbeam-truffle-plugin": "^1.3.1"
   }
 }
