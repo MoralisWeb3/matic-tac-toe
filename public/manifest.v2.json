@@ -1,0 +1,20 @@
+{
+  "short_name": "Moralis",
+  "name": "Moralis Status",
+  "icons": [
+    {
+      "src": "favicons/20_02_Moralis-Favicon32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "favicons/20_02_Moralis-Favicon192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
