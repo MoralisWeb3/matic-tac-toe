@@ -4,11 +4,13 @@ import Moralis from "moralis";
 import { getCurrentAddress } from "../../../utils";
 import { useChainContext } from "../../Moralis";
 import { useStorePendingTx } from "../../../context/PendingTx";
+import { useMemo } from "react";
 
 export const ticTacToeAddresses = {
   '0x13881': TicTacToe.networks['80001'].address,
   '0x45': '0x9B959c65cA793Ad7772D3915617D2b0A430D0c3B', //TicTacToe.networks['80001'].address
-  '0x507': '0x916D0749aE454118628d138750945A321344b8c7'
+  '0x507': '0x916D0749aE454118628d138750945A321344b8c7',
+  '0x50': '0xDc968bA1f27D73753a847F186bf96fe391458a31',
 }
 async function initTicTacToe(address) {
   const web3 = await Moralis.Web3.enable();
@@ -25,7 +27,7 @@ export function useTicTacToeContract() {
   const storePendingTx = useStorePendingTx()
   const address = ticTacToeAddresses[chainId]
 
-  return {
+  return useMemo(() => ({
     address,
     approve: async (token: string, address: string, amount: string) => {
       const contract = await initERC20(token);
@@ -76,5 +78,5 @@ export function useTicTacToeContract() {
       storePendingTx(tx);
       return tx;
     },
-  };
+  }), [chainId]);
 }

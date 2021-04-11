@@ -28,6 +28,7 @@ export const ApproveButton = ({ token, amount }) => {
     try {
       await contract
         .approve(token, contract.address, amount)
+        .then(() => setLoading(false))
         .then(() => refetch(token, contract.address))
         .then(() =>
           setAlert({
@@ -42,8 +43,8 @@ export const ApproveButton = ({ token, amount }) => {
     } catch (e) {
       console.error(e);
       setAlert({ show: true, title: "Approve Error", message: e.message });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -75,6 +76,7 @@ export const StartGameButton = ({
     await contract
       .start(token, amount)
       .then((v) => {
+        setLoading(false);
         const newGameId = v.events?.Start?.returnValues?.gameId;
         if (newGameId) {
           history.push(`/tic-tac-toe/${chainId}/${newGameId}`);
@@ -88,8 +90,8 @@ export const StartGameButton = ({
       .catch((e) => {
         console.error(e);
         setAlert({ show: true, title: "Start Error", message: e.message });
+        setLoading(false);
       });
-    setLoading(false);
   };
 
   return (
@@ -119,6 +121,7 @@ export const JoinGameButton = ({
     setLoading(true);
     await contract
       .join(gameId, amount)
+      .then(() => setLoading(false))
       .then(() => refetch())
       .then(() =>
         setAlert({
@@ -130,8 +133,8 @@ export const JoinGameButton = ({
       .catch((e) => {
         console.error(e);
         setAlert({ show: true, title: "Join Error", message: e.message });
+        setLoading(false);
       });
-    setLoading(false);
   };
 
   return (

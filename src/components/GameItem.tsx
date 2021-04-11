@@ -2,11 +2,11 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import { useLoadGame } from "../context/Game";
 import { useTokenFromList } from "../context/Token";
+import { chainIdToName } from "../hooks/Moralis";
 import {
   formatAddress,
   zeroAddress,
   formatBalance,
-  chainIdToName,
 } from "../utils";
 
 export const GameListCard = ({ game, chainId, loading }) => {

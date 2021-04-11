@@ -11,24 +11,11 @@ export function formatBalance(balance = "", decimals = 18) {
   return Number(balance) / 10 ** decimals;
 }
 export function toWei(balance = "", decimals = 18) {
-  return String(Number(balance) * 10 ** decimals)
+  return `0x${(Number(balance) * 10 ** decimals).toString(16)}`
 }
 export function zeroAddress() {
   return "0x0000000000000000000000000000000000000000";
 }
 export function getCurrentAddress() {
   return ((window as any).ethereum?.selectedAddress ?? "").toLowerCase();
-}
-
-export function chainIdToName (chainId) {
-    switch (chainId) {
-        case "0x13881":
-           return "Matic Mumbai"
-        case "0x45":
-           return "Optimism Test"
-        case "0x507":
-           return "Moonbase"
-        default:
-            return ""
-    }
 }

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import { useChainContext } from "../hooks/Moralis";
-import { chainIdToName } from "../utils";
+import { useChainContext, addEthereumChain, chainIdToName } from "../hooks/Moralis";
 
 export const IncorrectChainModal = ({ chainId }) => {
   const [currentChainId] = useChainContext();
@@ -42,9 +41,17 @@ export const IncorrectChainModal = ({ chainId }) => {
               ></button>
             </div>
             <div className="modal-body">
-                Select the network <code>{chainIdToName(chainId)}</code> in Metamask to continue to game.
+              Switch the network to <code>{chainIdToName(chainId)}</code> in Metamask to continue to game.
             </div>
             <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-primary"
+                data-bs-dismiss="modal"
+                onClick={() => addEthereumChain(chainId)}
+              >
+                Switch Network
+              </button>
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -57,7 +64,7 @@ export const IncorrectChainModal = ({ chainId }) => {
           </div>
         </div>
       </div>
-      <div className={`modal-backdrop fade ${open ? "show" : ""}`}></div>
+      {open ? <div className={`modal-backdrop fade ${open ? "show" : ""}`}></div> : null}
     </>
   );
 };

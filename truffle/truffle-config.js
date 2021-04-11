@@ -27,6 +27,14 @@ const mnemonic = fs.readFileSync("../seed.txt", "utf-8").toString().trim();
 // console.log(new HDWalletProvider(mnemonic, 'wss://rpc-mumbai.maticvigil.com/ws/v1/4a69b6161fc0b7777eff3f5e49f047174b6e4e4a'))
 // .send({jsonrpc: '2.0', id: 1, params: [], })
 
+const dusty = new HDWalletProvider({
+  mnemonic: mnemonic,
+  addressIndex: 3,
+  providerOrUrl: 'https://rpc.dusty.plasmnet.io:8545'
+})
+
+console.log(dusty)
+
 module.exports = {
   /**
    * Networks define how you connect to your ethereum client and let you set the
@@ -85,9 +93,10 @@ module.exports = {
     moonbase: {
       provider: () => new HDWalletProvider(mnemonic, 'https://rpc.testnet.moonbeam.network'),
       network_id: 1287,
-      // confirmations: 2,
-      // timeoutBlocks: 200,
-      // skipDryRun: true
+    },
+    dusty: {
+      provider: () => dusty,
+      network_id: 80,
     }
   },
 
@@ -110,5 +119,5 @@ module.exports = {
       // }
     }
   },
-  plugins: ['moonbeam-truffle-plugin'],
+  // plugins: ['moonbeam-truffle-plugin'],
 };

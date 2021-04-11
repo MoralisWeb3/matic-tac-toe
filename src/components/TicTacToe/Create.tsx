@@ -6,8 +6,13 @@ import {
 } from "../../context/Token";
 import { useBetAmount } from "../../context/Bet";
 import { useTokenBalance } from "../../context/TokenBalance";
-import { useAddressContext, useChainContext } from "../../hooks/Moralis";
-import { formatBalance, chainIdToName } from "../../utils";
+import {
+  useAddressContext,
+  useChainContext,
+  chainIdToName,
+  addEthereumChain,
+} from "../../hooks/Moralis";
+import { formatBalance } from "../../utils";
 
 export const GameCreateForm = () => {
   const [token, setToken] = useSelectedToken();
@@ -49,22 +54,28 @@ export const GameCreateForm = () => {
         </label>
         <input
           type="email"
-          className="form-control"
+          className="form-control mb-2"
           id="bet-amount-input"
           placeholder="0.0"
           value={amount}
           onChange={(ev) => setAmount(ev.target.value)}
         ></input>
-        {selectedTokenData?.chainId && selectedTokenData?.chainId !== chainId ? (
-          <small className="text-danger">
-            Select chain {chainIdToName(selectedTokenData?.chainId)}
+        {selectedTokenData?.chainId &&
+        selectedTokenData?.chainId !== chainId ? (
+          <small>
+            Select chain{" "}
+            <button className="btn btn-outline-primary btn-sm" onClick={() => addEthereumChain(selectedTokenData?.chainId)}>
+              {chainIdToName(selectedTokenData?.chainId)}
+            </button>
           </small>
         ) : (
           <small>
             {balance.loading ? (
               <span>&nbsp;</span>
             ) : (
-              `Max: ${formatBalance(balance?.data, selectedTokenData?.decimals) ?? "0"}`
+              `Max: ${
+                formatBalance(balance?.data, selectedTokenData?.decimals) ?? "0"
+              }`
             )}
           </small>
         )}

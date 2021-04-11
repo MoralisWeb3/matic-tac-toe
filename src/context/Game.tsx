@@ -49,7 +49,7 @@ export const useFetchGame = () => {
           setGame({ loading: false, data: null, error });
         });
     }
-  }, [])
+  }, [contract])
   return callback
 }
 

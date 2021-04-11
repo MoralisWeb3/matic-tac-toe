@@ -2,7 +2,7 @@ import React from "react";
 import Moralis from "moralis";
 
 const defaultFilter = (_q) => {};
-const defaultParams = [];
+const defaultParams: any[] = [];
 const defaultOnCreate = (object, vs) => [object].concat(vs ?? []);
 const defaultOnUpdate = (object, vs) =>
   vs.map((v) => (v.id === object.id ? object : v));

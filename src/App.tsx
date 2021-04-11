@@ -23,9 +23,9 @@ export const App = () => {
     <>
       <Switch>
         <Route path="/" exact>
-          <L2Lobby tableName="StartTicTacToe" chainId="0x13881" />
-          <L2Lobby tableName="StartTicTacToeOptimism" chainId="0x45" />
-          <L2Lobby tableName="StartTicTacToeMoonbase" chainId="0x507" />
+          <L2Lobby chainId="0x13881" />
+          <L2Lobby chainId="0x507" />
+          <L2Lobby chainId="0x45" />
         </Route>
         <Route path="/tic-tac-toe" exact component={TicTacToe} />
         <Route

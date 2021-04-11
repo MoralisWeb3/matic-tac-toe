@@ -2,11 +2,23 @@ import React from "react";
 import { Header, MainTitle } from "../components/Header";
 import { GameListCard } from "../components/GameItem";
 import { useMoralisQuery } from "../hooks/Moralis/Query";
+import { chainIdToName, chainIdToTableName, MUMBAI_NETWORK, MOONBASE  } from "../hooks/Moralis";
 
 const maxCards = 6
 
-export const L2Lobby = ({ chainId, tableName }) => {
-  const { data: starts, loading } = useMoralisQuery(tableName, {
+const ChainHeaderImage = ({ chainId }) => {
+  switch (chainId) {
+    case MUMBAI_NETWORK.chainId:
+      return <img src={`${process.env.PUBLIC_URL}/logo-polygon.png`} alt={chainIdToName(chainId)} style={{ height: 60 }} />;
+    case MOONBASE.chainId:
+      return <img src={`${process.env.PUBLIC_URL}/logo-moonbeam.png`} alt={chainIdToName(chainId)} style={{ height: 60 }} />;
+    default:
+      return null;
+  }
+}
+
+export const L2Lobby = ({ chainId }) => {
+  const { data: starts, loading } = useMoralisQuery(chainIdToTableName(chainId), {
     live: true,
     filter: (query) => {
       query.descending("block_number");
@@ -17,6 +29,7 @@ export const L2Lobby = ({ chainId, tableName }) => {
   return (
     <>
       <Header className="text-center">
+        <ChainHeaderImage chainId={chainId} />
         <MainTitle chainId={chainId} />
       </Header>
       <div className="container pb-4">

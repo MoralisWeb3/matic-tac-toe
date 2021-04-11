@@ -33,6 +33,13 @@ const initialTokenList: IToken[] = [
     decimals: 18,
     chainId: "0x507",
   },
+  // {
+  //   symbol: "XYZ",
+  //   address: "0x5d34329065383d4817300cC5da29CB03f7Cb163e",
+  //   name: "XYZ (Dusty Plasm)",
+  //   decimals: 18,
+  //   chainId: "0x50",
+  // },
 ];
 
 type IToken = {

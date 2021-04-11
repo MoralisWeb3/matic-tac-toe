@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Moralis from 'moralis';
 import { useParams } from "react-router-dom";
 import { useSetAlert } from "../components/Alert";
@@ -20,32 +20,45 @@ import {
   useLoadGame,
   useRefetchGame,
 } from "../context/Game";
+import { RealtimeGameProvider, useRealtimeGame } from "../context/RealtimeGame";
 import { useSelectedToken, useTokenFromList } from "../context/Token";
 import { useTicTacToeContract } from "../hooks/Contract/TicTacToe";
-import { useAddressContext, useChainContext } from "../hooks/Moralis";
+import { useAddressContext, useChainContext, chainIdToTableName } from "../hooks/Moralis";
 import { formatAddress, getCurrentAddress, toWei, zeroAddress } from "../utils";
 import { useBetAmount } from "../context/Bet";
 import { useTokenBalance } from "../context/TokenBalance";
 import { IncorrectChainModal } from "../components/ChainModal";
+import { useMoralisQuery } from "../hooks/Moralis/Query";
 
 export const TicTacToe = () => {
   const params = useParams<{ gameId: string, chainId: string }>();
   const value = useLoadGame(params.gameId);
   const [chainId] = useChainContext()
+  const realtime = useMoralisQuery(chainIdToTableName(chainId), {
+    live: true,
+    skip: !params.gameId,
+    params: [params.gameId, params.chainId],
+    filter: (query) => {
+      query.equalTo("gameId", params.gameId);
+      query.descending("block_number");
+    },
+  });
 
   return (
     <GameProvider value={value}>
-      <Header>
-        <MainTitle chainId={params.chainId || chainId} />
-        {params.gameId ? <GameStatusText /> : <GameCreateForm />}
-      </Header>
-      <div className="mx-auto" style={{ width: 250 }}>
-        {params.gameId ? <TicTacToeGame /> : null}
-        <div className="d-grid gap-2 mx-auto my-4">
-          <GameCurrentActionButton />
+      <RealtimeGameProvider value={realtime}>
+        <Header>
+          <MainTitle chainId={params.chainId || chainId} />
+          {params.gameId ? <GameStatusText /> : <GameCreateForm />}
+        </Header>
+        <div className="mx-auto" style={{ width: 250 }}>
+          {params.gameId ? <TicTacToeGame /> : null}
+          <div className="d-grid gap-2 mx-auto my-4">
+            <GameCurrentActionButton />
+          </div>
         </div>
-      </div>
-      <IncorrectChainModal chainId={params.chainId} />
+        <IncorrectChainModal chainId={params.chainId} />
+      </RealtimeGameProvider>
     </GameProvider>
   );
 };
@@ -55,25 +68,65 @@ const web3 = new Moralis.Web3((window as any).ethereum)
 const TicTacToeGame = () => {
   const [game] = useGame();
   const gameData = game?.data;
+  const realtimeGame = useRealtimeGame();
   const boxes = gameDataBoxes(gameData);
+  const pendingBoxes = gameDataBoxes(realtimeGame?.data?.[0]?.attributes);
   const refetch = useRefetchGame();
+  const [chainId] = useChainContext()
+  const prevChain = useRef(null)
+
+  console.log(gameData, realtimeGame)
 
   useEffect(() => {
-    const subscription = web3.eth.subscribe('logs', {
-      topics: [web3.utils.sha3('Play(uint256,uint256,uint256,uint256)')]
+    if (prevChain.current && prevChain.current !== chainId) {
+      refetch()
+    }
+    prevChain.current = chainId
+  }, [chainId])
+
+  useEffect(() => {
+    const joinTopic = web3.utils.sha3('Join(uint256,address,address,uint256)')
+    const playTopic = web3.utils.sha3('Play(uint256,uint256,uint256,uint256)')
+
+    const joinEvent = web3.eth.subscribe('logs', {
+      topics: [joinTopic],
+      fromBlock: 'latest'
+    })
+    .on('connected', () => {
+      console.log('Subscribed to', joinTopic)
+    })
+    .on('data', (v) => {
+      console.log('Join Event', v)
+      refetch()
+    })
+    .on('error', (e) => {
+      console.log('Join Sub Error', e)
+    })
+    
+    const playEvent = web3.eth.subscribe('logs', {
+      topics: [playTopic],
+      fromBlock: 'latest'
+    })
+    .on('connected', () => {
+      console.log('Subscribed to', playTopic)
     })
     .on('data', (v) => {
       console.log('Play Event', v)
       refetch()
     })
-    .on('error', (e) => console.log(e))
+    .on('error', (e) => {
+      console.log('Play Sub Error', e)
+    })
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => {
+      playEvent.unsubscribe()
+      joinEvent.unsubscribe()
+    }
+  }, [chainId, refetch])
 
   const { handleBoxClick } = useTicTacToeActions();
 
-  return <TicTacToeBoard boxes={boxes} onBoxClick={handleBoxClick} />;
+  return <TicTacToeBoard boxes={boxes} pendingBoxes={pendingBoxes} onBoxClick={handleBoxClick} />;
 };
 
 const GameCurrentActionButton = () => {
@@ -155,6 +208,7 @@ const useTicTacToeActions = () => {
   const refetch = useRefetchGame();
   const [loading, setLoading] = useState(false);
   const [game] = useGame();
+  const realtime = useRealtimeGame();
   
 
   const handleBoxClick = async (num: number) => {
@@ -177,6 +231,20 @@ const useTicTacToeActions = () => {
       if (address !== nextUpAddress) {
         throw new Error(`Next to play is ${formatAddress(nextUpAddress)}`);
       }
+
+      const realtimeData = realtime.data?.[0]
+      if (realtimeData) {
+        const rows = [game?.data?.row1, game?.data?.row2, game?.data?.row3]
+        const rowStr = rows[row]
+        if (rowStr) {
+          rows[row] = rowStr.slice(0, col).concat(String(turn + 2), rowStr.slice(col + 1))
+        }
+        realtimeData.set('row1', rows[0])
+        realtimeData.set('row2', rows[1])
+        realtimeData.set('row3', rows[2])
+        await realtimeData.save()
+      }
+
       await contract.play(gameId, row, col).then(() => refetch());
       setAlert({
         show: true,
@@ -185,6 +253,14 @@ const useTicTacToeActions = () => {
       });
     } catch (e) {
       console.error(e);
+      const realtimeData = realtime.data?.[0]
+      if (realtimeData) {
+        realtimeData.set('row1', game?.data?.row1)
+        realtimeData.set('row2', game?.data?.row2)
+        realtimeData.set('row3', game?.data?.row3)
+        await realtimeData.save()
+      }
+      
       setAlert({ show: true, title: "Play Error", message: e.message });
     }
     setLoading(false);

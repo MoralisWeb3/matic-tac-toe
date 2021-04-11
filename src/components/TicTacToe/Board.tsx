@@ -5,13 +5,13 @@ import "./index.css";
 // Create Box component
 export const Box = (props) => {
   return (
-    <button className="board__box" onClick={props.onClick}>
-      {props.value}
+    <button className="board__box" onClick={props.onClick} style={{ opacity: props.pendingValue && props.value !== props.pendingValue ? 0.4 : 1 }}>
+      {props.value || props.pendingValue}
     </button>
   );
 };
 
-export const TicTacToeBoard = ({ boxes, onBoxClick }) => {
+export const TicTacToeBoard = ({ boxes, pendingBoxes, onBoxClick }) => {
 //   const winner = utils.findWinner(boxes);s
 
   // Are all boxes checked?
@@ -25,27 +25,27 @@ export const TicTacToeBoard = ({ boxes, onBoxClick }) => {
           {/* <h2 className="board-heading">{status}</h2> */}
 
           <div className="board-row">
-            <Box value={boxes[0]} onClick={() => onBoxClick(0)} />
+            <Box value={boxes[0]} pendingValue={pendingBoxes[0]} onClick={() => onBoxClick(0)} />
 
-            <Box value={boxes[1]} onClick={() => onBoxClick(1)} />
+            <Box value={boxes[1]} pendingValue={pendingBoxes[1]} onClick={() => onBoxClick(1)} />
 
-            <Box value={boxes[2]} onClick={() => onBoxClick(2)} />
+            <Box value={boxes[2]} pendingValue={pendingBoxes[2]} onClick={() => onBoxClick(2)} />
           </div>
 
           <div className="board-row">
-            <Box value={boxes[3]} onClick={() => onBoxClick(3)} />
+            <Box value={boxes[3]} pendingValue={pendingBoxes[3]} onClick={() => onBoxClick(3)} />
 
-            <Box value={boxes[4]} onClick={() => onBoxClick(4)} />
+            <Box value={boxes[4]} pendingValue={pendingBoxes[4]} onClick={() => onBoxClick(4)} />
 
-            <Box value={boxes[5]} onClick={() => onBoxClick(5)} />
+            <Box value={boxes[5]} pendingValue={pendingBoxes[5]} onClick={() => onBoxClick(5)} />
           </div>
 
           <div className="board-row">
-            <Box value={boxes[6]} onClick={() => onBoxClick(6)} />
+            <Box value={boxes[6]} pendingValue={pendingBoxes[6]} onClick={() => onBoxClick(6)} />
 
-            <Box value={boxes[7]} onClick={() => onBoxClick(7)} />
+            <Box value={boxes[7]} pendingValue={pendingBoxes[7]} onClick={() => onBoxClick(7)} />
 
-            <Box value={boxes[8]} onClick={() => onBoxClick(8)} />
+            <Box value={boxes[8]} pendingValue={pendingBoxes[8]} onClick={() => onBoxClick(8)} />
           </div>
         </div>
       </div>
