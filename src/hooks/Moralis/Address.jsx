@@ -1,6 +1,6 @@
 import Moralis from "moralis";
 import React, { createContext, useContext } from "react";
-import { getCurrentAddress } from "../../utils"
+import { getCurrentAddress, getCurrentAddressAsync } from "../../utils"
 
 const initial = getCurrentAddress();
 
@@ -10,11 +10,17 @@ export const AddressProvider = ({ children }) => {
   const value = React.useState(getCurrentAddress());
   React.useEffect(() => {
     const [address, setAddress] = value;
-    setTimeout(() => {
-      if (address !== getCurrentAddress()) {
-        setAddress(getCurrentAddress());
+
+    getCurrentAddressAsync()
+    .then((current) => {
+      if (address !== current) {
+        setAddress(current);
       }
-    }, 100);
+    })
+    .catch(e => {
+      console.warn(e)
+    })
+
     return Moralis.Web3.onAccountsChanged(([v]) => {
       setAddress((v ?? "").toLowerCase());
     });

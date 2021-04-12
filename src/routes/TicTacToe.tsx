@@ -24,7 +24,7 @@ import { RealtimeGameProvider, useRealtimeGame } from "../context/RealtimeGame";
 import { useSelectedToken, useTokenFromList } from "../context/Token";
 import { useTicTacToeContract } from "../hooks/Contract/TicTacToe";
 import { useAddressContext, useChainContext, chainIdToTableName } from "../hooks/Moralis";
-import { formatAddress, getCurrentAddress, toWei, zeroAddress } from "../utils";
+import { formatAddress, getCurrentAddressAsync, toWei, zeroAddress } from "../utils";
 import { useBetAmount } from "../context/Bet";
 import { useTokenBalance } from "../context/TokenBalance";
 import { IncorrectChainModal } from "../components/ChainModal";
@@ -226,7 +226,7 @@ const useTicTacToeActions = () => {
         throw new Error("Waiting for second player to join");
       }
       const turn = game?.data?.turn ?? 0;
-      const address = getCurrentAddress()?.toLowerCase();
+      const address = getCurrentAddressAsync();
       const nextUpAddress = game?.data?.[`player${turn}`]?.toLowerCase();
       if (address !== nextUpAddress) {
         throw new Error(`Next to play is ${formatAddress(nextUpAddress)}`);

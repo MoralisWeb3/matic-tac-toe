@@ -1,7 +1,7 @@
 import TicTacToe from "./TicTacToe.json";
 import ERC20 from "../ERC20/ERC20.json";
 import Moralis from "moralis";
-import { getCurrentAddress } from "../../../utils";
+import { getCurrentAddressAsync } from "../../../utils";
 import { useChainContext } from "../../Moralis";
 import { useStorePendingTx } from "../../../context/PendingTx";
 import { useMemo } from "react";
@@ -31,23 +31,23 @@ export function useTicTacToeContract() {
     address,
     approve: async (token: string, address: string, amount: string) => {
       const contract = await initERC20(token);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       return contract.methods.approve(address, amount).send({ from });
     },
     balanceOf: async (token: string, address: string) => {
       const contract = await initERC20(token);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       return contract.methods.balanceOf(address).call({ from });
     },
     allowance: async (token: string, address: string) => {
       const contract = await initERC20(token);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       return contract.methods.allowance(from, address).call({ from });
     },
     game: async (gameId: string) => {
         const chain = await (window as any)?.ethereum?.request({ method: 'eth_chainId' })
         const contract = await initTicTacToe(ticTacToeAddresses[chain]);
-        const from = getCurrentAddress();
+        const from = await getCurrentAddressAsync();
         return contract.methods.get_game_status(gameId).call({ from })
         .then((v) => ({
           player0: v[0],
@@ -63,17 +63,17 @@ export function useTicTacToeContract() {
     },
     start: async (token: string, amount: string) => {
       const contract = await initTicTacToe(address);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       return contract.methods.start(token, amount).send({ from });
     },
     join: async (gameId: string, amount: string) => {
       const contract = await initTicTacToe(address);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       return contract.methods.join(gameId, amount).send({ from });
     },
     play: async (gameId: string, row: number, col: number) => {
       const contract = await initTicTacToe(address);
-      const from = getCurrentAddress();
+      const from = await getCurrentAddressAsync();
       const tx = contract.methods.play(gameId, String(row), String(col)).send({ from });
       storePendingTx(tx);
       return tx;

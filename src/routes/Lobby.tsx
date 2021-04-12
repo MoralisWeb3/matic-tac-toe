@@ -2,16 +2,18 @@ import React from "react";
 import { Header, MainTitle } from "../components/Header";
 import { GameListCard } from "../components/GameItem";
 import { useMoralisQuery } from "../hooks/Moralis/Query";
-import { chainIdToName, chainIdToTableName, MUMBAI_NETWORK, MOONBASE  } from "../hooks/Moralis";
+import { chainIdToName, chainIdToTableName, MUMBAI_NETWORK, MOONBASE, OPTIMISM_TEST  } from "../hooks/Moralis";
 
 const maxCards = 6
 
 const ChainHeaderImage = ({ chainId }) => {
   switch (chainId) {
     case MUMBAI_NETWORK.chainId:
-      return <img src={`${process.env.PUBLIC_URL}/logo-polygon.png`} alt={chainIdToName(chainId)} style={{ height: 60 }} />;
+      return <img src={`${process.env.PUBLIC_URL}/logo-polygon.png`} alt={chainIdToName(chainId)} style={{ height: 60, marginBottom: 8 }} />;
     case MOONBASE.chainId:
-      return <img src={`${process.env.PUBLIC_URL}/logo-moonbeam.png`} alt={chainIdToName(chainId)} style={{ height: 60 }} />;
+      return <img src={`${process.env.PUBLIC_URL}/logo-moonbeam.png`} alt={chainIdToName(chainId)} style={{ height: 60, marginBottom: 8 }} />;
+    case OPTIMISM_TEST.chainId: 
+      return <h1 className="optimism-title">Optimism</h1>
     default:
       return null;
   }

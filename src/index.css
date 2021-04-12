@@ -11,3 +11,37 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.optimism-title:hover {
+  color: transparent;
+}
+.optimism-title {
+  background: linear-gradient(90deg,#f01a37,#169fc9,#f01a37);
+  background-size: 200% 200%;
+  -webkit-animation: rainbow 1.5s ease-in-out infinite;
+  animation: rainbow 1.5s ease-in-out infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  transition: all .3s ease-in-out!important;
+  cursor: pointer;
+  outline: none;
+  color: #f01a37;
+  font-style: italic;
+  font-weight: 500;
+  text-decoration: none !important;
+}
+
+@keyframes rainbow {
+  25% {
+    background-position: 100% 0;
+  }
+  50% {
+      background-position: 100% 100%;
+  }
+  75% {
+      background-position: 0 100%;
+  }
+  100% {
+      background-position: 0 0;
+  }
+}
