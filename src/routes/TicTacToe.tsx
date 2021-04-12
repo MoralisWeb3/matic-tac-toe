@@ -245,6 +245,17 @@ const useTicTacToeActions = () => {
         realtimeData.set('row3', rows[2])
         await realtimeData.save()
       }
+    } catch (e) {
+      setAlert({ show: true, title: "Play Error", message: e.message });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const gameId = game?.data?.gameId;
+      if (!gameId) {
+        throw new Error("Game not found");
+      }
 
       await contract.play(gameId, row, col).then(() => refetch());
       setAlert({
