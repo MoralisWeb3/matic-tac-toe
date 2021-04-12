@@ -19,7 +19,7 @@ export function zeroAddress() {
 export function getCurrentAddress() {
   return ((window as any).ethereum?.selectedAddress ?? "").toLowerCase();
 }
-export async function getCurrentAddressAsync() {
+export async function getCurrentAddressAsync(web3) {
   const accounts = await web3.eth.getAccounts();
   return (accounts?.[0] ?? '').toLowerCase();
 }

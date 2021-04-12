@@ -226,7 +226,8 @@ const useTicTacToeActions = () => {
         throw new Error("Waiting for second player to join");
       }
       const turn = game?.data?.turn ?? 0;
-      const address = getCurrentAddressAsync();
+      const web3 = await Moralis.Web3.enable();
+      const address = await getCurrentAddressAsync(web3);
       const nextUpAddress = game?.data?.[`player${turn}`]?.toLowerCase();
       if (address !== nextUpAddress) {
         throw new Error(`Next to play is ${formatAddress(nextUpAddress)}`);
